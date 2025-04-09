@@ -1,12 +1,4 @@
-use pinocchio::{ProgramResult, account_info::AccountInfo, entrypoint, msg, pubkey::Pubkey};
-
-entrypoint!(process_instruction);
-
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult {
-    msg!("Hello from my program!");
-    Ok(())
-}
+use pinocchio::{
+    ProgramResult, account_info::AccountInfo, entrypoint, program_error::ProgramError,
+    pubkey::Pubkey,
+};
