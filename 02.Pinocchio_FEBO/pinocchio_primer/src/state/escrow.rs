@@ -14,6 +14,7 @@ pub struct EscrowState {
 impl EscrowState {
     pub const LEN: usize = 32 + 32 + 32 + 8 + 8 + 1;
 
+    // Efficient zero-copy deserialization with type-safe access to account data.
     pub fn from_account_info(account_info: &AccountInfo) -> &mut Self {
         assert_eq!(account_info.data_len(), Self::LEN);
         assert_eq!(unsafe { *account_info.owner() }, crate::id());
