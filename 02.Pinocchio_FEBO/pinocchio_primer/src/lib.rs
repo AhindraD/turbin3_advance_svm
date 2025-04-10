@@ -7,6 +7,9 @@ pub mod state;
 
 entrypoint!(process_instruction);
 
+use pinocchio_pubkey::declare_id;
+declare_id!("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
