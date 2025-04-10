@@ -8,7 +8,7 @@ pub trait Initialized {
     fn is_initialized(&self) -> bool;
 }
 
-pub fn load_acc_unchecked<T: DataLen + Initialized>(bytes: &[u8]) -> Result<&T, ProgramError> {
+pub fn load_acc_unchecked<T: DataLen>(bytes: &[u8]) -> Result<&T, ProgramError> {
     if bytes.len() != T::LEN {
         return Err(ProgramError::InvalidAccountData);
     }
@@ -27,9 +27,7 @@ pub fn load_acc<T: DataLen + Initialized>(bytes: &[u8]) -> Result<&T, ProgramErr
     })
 }
 
-pub fn load_acc_mut_unchecked<T: DataLen + Initialized>(
-    bytes: &mut [u8],
-) -> Result<&mut T, ProgramError> {
+pub fn load_acc_mut_unchecked<T: DataLen>(bytes: &mut [u8]) -> Result<&mut T, ProgramError> {
     if bytes.len() != T::LEN {
         return Err(ProgramError::InvalidAccountData);
     }
