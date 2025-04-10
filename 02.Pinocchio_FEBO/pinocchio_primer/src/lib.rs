@@ -3,6 +3,8 @@ use pinocchio::{
     pubkey::Pubkey,
 };
 
+pub mod state;
+
 entrypoint!(process_instruction);
 
 pub fn process_instruction(
