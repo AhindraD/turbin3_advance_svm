@@ -39,16 +39,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "530596fa307103e53257f2cf064815919ee7fbc4c7ab999f6f13cc7067c3aff1"
 
 [[package]]
-name = "pinocchio-associated-token-account"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b45fffdec0a1d05199b0f67b6b802be32ffc30a5fe29d222d7653865ca57401c"
-dependencies = [
- "pinocchio",
- "pinocchio-pubkey",
-]
-
-[[package]]
 name = "pinocchio-log"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -99,11 +89,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "pinocchio_escrow"
+name = "pinocchio_vault"
 version = "0.1.0"
 dependencies = [
  "pinocchio",
- "pinocchio-associated-token-account",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
