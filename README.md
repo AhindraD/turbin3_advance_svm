@@ -31,7 +31,8 @@ Reference: Monad RaptorCast Documentation: https://docs.monad.xyz/monad-arch/con
   Every other node lives at level 2.
 
   Diagram: 
-  ![image](https://gist.github.com/user-attachments/assets/08881892-7931-42e2-b2a4-12cdee602119)
+![image](https://github.com/user-attachments/assets/797b0e87-ddae-40e2-b821-76ac16465cbf)
+
 
 
 
