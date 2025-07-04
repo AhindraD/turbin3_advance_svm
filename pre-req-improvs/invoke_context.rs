@@ -64,7 +64,8 @@ macro_rules! declare_process_instruction {
     ($process_instruction:ident, $cu_to_consume:expr, |$invoke_context:ident| $inner:tt) => {
         $crate::solana_sbpf::declare_builtin_function!(
             $process_instruction,
-            fn rust(
+            //wrapper function  ---> only uses the invoke_context, Ignores the other parameters since the actual instruction logic is in the inner function
+            fn rust( //language tag  --> supports multiple implementation types rust, C, Assembly, etc.
                 invoke_context: &mut $crate::invoke_context::InvokeContext,
                 _arg0: u64,
                 _arg1: u64,
@@ -80,20 +81,24 @@ macro_rules! declare_process_instruction {
 
                 let consumption_result = if $cu_to_consume > 0
                 {
+                    //deducts compute units from the transaction's budget
+                    //fails if not enough CU remaining
                     invoke_context.consume_checked($cu_to_consume)
                 } else {
+                    // non-CU-consuming operations
                     Ok(())
                 };
                 consumption_result
-                    .and_then(|_| {
-                        process_instruction_inner(invoke_context)
-                            .map(|_| 0)
+                    .and_then(|_| { // |_| ignores the success value from consume_checked()
+                        process_instruction_inner(invoke_context) //Calls your actual instruction logic
+                            .map(|_| 0) //0 typically means "success" in SBPF
                             .map_err(|err| Box::new(err) as Box<dyn std::error::Error>)
                     })
-                    .into()
+                    .into() //Final conversion to match the exact return type expected by SBPF
             }
         );
     };
+    //"make my simple function work with Solana's complex runtime" - a complexity-hiding wrapper that Generates a complete SBPF builtin function - Consumes compute units BEFORE running your code.Wraps your simple logic in the complex SBPF function signature
 }
 
 impl ContextObject for InvokeContext<'_> {
