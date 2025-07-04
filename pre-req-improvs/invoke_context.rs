@@ -47,10 +47,20 @@ pub type BuiltinFunctionWithContext = BuiltinFunction<InvokeContext<'static>>;
 /// Adapter so we can unify the interfaces of built-in programs and syscalls
 #[macro_export]
 macro_rules! declare_process_instruction {
-    //[ident, expr, and tt] are fragment specifiers
-    //ident --->	An identifier (variable/function/type name)
-    //expr --->	An expression (evaluates to a value)
-    //tt --->	A token tree (a fragment of Rust code/nested code)
+        //[ident, expr, and tt] are fragment specifiers
+        //01. ident --->	An identifier (variable/function/type name)
+        //02. expr --->	An expression (evaluates to a value)
+        //03. tt --->	A token tree (a fragment of Rust code/nested code)
+
+        //|$invoke_context:ident| $inner:tt ---> Rust macro pattern syntax
+        // <closure-like syntax pattern> ---> |param| { body }
+        // |$invoke_context:ident| - This captures the parameter part of a closure
+        // The | pipes are literal tokens that must appear in the input
+        // $invoke_context:ident captures an identifier that will be the parameter name
+        // The closing | is another literal token
+        // $inner:tt - This captures the body of the closure as a token tree
+
+    //input pattern (or matcher) for the macro.
     ($process_instruction:ident, $cu_to_consume:expr, |$invoke_context:ident| $inner:tt) => {
         $crate::solana_sbpf::declare_builtin_function!(
             $process_instruction,
