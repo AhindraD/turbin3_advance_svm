@@ -132,9 +132,10 @@ impl fmt::Display for AllocErr {
     }
 }
 
+// BpfAllocator is a simple allocator that allocates memory by just moving pointer forward
 pub struct BpfAllocator {
-    len: u64,
-    pos: u64,
+    len: u64, //Total available memory size
+    pos: u64, //Current position in the memory (how much we've allocated so far)
 }
 
 impl BpfAllocator {
@@ -143,6 +144,7 @@ impl BpfAllocator {
     }
 
     pub fn alloc(&mut self, layout: Layout) -> Result<u64, AllocErr> {
+        // align_offset() returns the number of bytes to align the pointer - padding bytes needed
         let bytes_to_align = (self.pos as *const u8).align_offset(layout.align()) as u64;
         if self
             .pos
