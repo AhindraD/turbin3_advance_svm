@@ -1,12 +1,17 @@
+![Solana Turbine](turbine-x-banner.JPG)
+
 # Ahindra D. - Advanced Pre-requisites
 
-Probable Optimizations in Sequence - Codebase annotation in comments below
-AdvanceSVM Repo: https://github.com/AhindraD/turbin3_advance_svm/tree/main/pre-req-improvs
+- Probable Optimizations in Sequence - Codebase annotation in comments below
+- ### AdvanceSVM Repo: https://github.com/AhindraD/turbin3_advance_svm/tree/main/pre-req-improvs
 
-## OPTIMIZATION 1: Account Deduplication - O(n²) → O(n)
+## OPTIMIZATION 1: Account Deduplication Check - Time Complexity Reduction -[ O(n²) → O(n) ]
 
-In InvokeContext impl ---> prepare_instruction() --> Duplicate account const search O(1)
-https://github.com/anza-xyz/agave/blob/825f16d3d5d0349b012a3a53e627d136312859f0/program-runtime/src/invoke_context.rs#L45 - Line 325
+- IMPROVEMENT: HashMap for O(1) lookup instead of O(n) linear search
+- PITFALL: Heap allocation
+
+- In InvokeContext impl ---> prepare_instruction() --> Duplicate account const search O(1)
+  https://github.com/anza-xyz/agave/blob/825f16d3d5d0349b012a3a53e627d136312859f0/program-runtime/src/invoke_context.rs#L325 (Line 325)
 
 ```rs
 #[allow(clippy::type_complexity)]
@@ -15,7 +20,7 @@ pub fn prepare_instruction(
     instruction: &StableInstruction,
     signers: &[Pubkey],
 ) -> Result<(Vec<InstructionAccount>, Vec<IndexOfAccount>), InstructionError> {
-    //Probable Optimization[O(n²) → O(n*1)] - using HashMap - O(1) lookup - PITFALL: heap allocation
+    //HashMap for O(1) lookup instead of O(n) linear search
     use std::collections::HashMap;
     let mut account_index_map: HashMap<IndexOfAccount, usize> = HashMap::new();
 
