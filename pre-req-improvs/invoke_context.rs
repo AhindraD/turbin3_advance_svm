@@ -358,7 +358,7 @@ impl<'a> InvokeContext<'a> {
         let instruction_context = self.transaction_context.get_current_instruction_context()?;
         let mut deduplicated_instruction_accounts: Vec<InstructionAccount> = Vec::new();
         let mut duplicate_indicies = Vec::with_capacity(instruction.accounts.len() as usize);
-        //01. Probable Optimization - using HashMap - O(1) lookup - PITFALL: heap allocation
+
         for (instruction_account_index, account_meta) in instruction.accounts.iter().enumerate() {
             let index_in_transaction = self
                 .transaction_context
@@ -377,11 +377,13 @@ impl<'a> InvokeContext<'a> {
                     .position(|instruction_account| {
                         instruction_account.index_in_transaction == index_in_transaction
                     })
+            //01. Probable Optimization - using HashMap - O(1) lookup - PITFALL: heap allocation -> O(n * 1)
             {
                 duplicate_indicies.push(duplicate_index);
                 let instruction_account = deduplicated_instruction_accounts
                     .get_mut(duplicate_index)
                     .ok_or(InstructionError::NotEnoughAccountKeys)?;
+                // if any privile is true, set it to true
                 instruction_account.is_signer |= account_meta.is_signer;
                 instruction_account.is_writable |= account_meta.is_writable;
             } else {
