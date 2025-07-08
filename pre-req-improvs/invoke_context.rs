@@ -358,6 +358,7 @@ impl<'a> InvokeContext<'a> {
         let instruction_context = self.transaction_context.get_current_instruction_context()?;
         let mut deduplicated_instruction_accounts: Vec<InstructionAccount> = Vec::new();
         let mut duplicate_indicies = Vec::with_capacity(instruction.accounts.len() as usize);
+        //01. Probable Optimization - using HashMap - O(1) lookup - PITFALL: heap allocation
         for (instruction_account_index, account_meta) in instruction.accounts.iter().enumerate() {
             let index_in_transaction = self
                 .transaction_context
@@ -407,6 +408,8 @@ impl<'a> InvokeContext<'a> {
                 });
             }
         }
+
+        // Perform privilege checks
         for instruction_account in deduplicated_instruction_accounts.iter() {
             let borrowed_account = instruction_context.try_borrow_instruction_account(
                 self.transaction_context,
