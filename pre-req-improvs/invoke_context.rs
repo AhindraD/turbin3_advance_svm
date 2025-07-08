@@ -165,7 +165,7 @@ impl BpfAllocator {
 pub struct EnvironmentConfig<'a> {
     pub blockhash: Hash,
     pub blockhash_lamports_per_signature: u64,
-    epoch_stake_callback: &'a dyn InvokeContextCallback,
+    epoch_stake_callback: &'a dyn InvokeContextCallback, // Dynamic dispatch -  specific method implementation is chosen at runtime rather than compile time
     feature_set: &'a SVMFeatureSet,
     sysvar_cache: &'a SysvarCache,
 }
@@ -195,6 +195,7 @@ pub struct SyscallContext {
 
 #[derive(Debug, Clone)]
 pub struct SerializedAccountMetadata {
+    //When a BPF program runs, Solana accounts are serialized into the VM's memory. This struct acts as a "memory map"
     pub original_data_len: usize,
     pub vm_data_addr: u64,
     pub vm_key_addr: u64,
@@ -753,11 +754,16 @@ impl<'a> InvokeContext<'a> {
 
 #[macro_export]
 macro_rules! with_mock_invoke_context_with_feature_set {
+    // creates a complete, realistic testing environment -
+    //Mock txn with test accounts
     (
         $invoke_context:ident,
         $transaction_context:ident,
         $feature_set:ident,
-        $transaction_accounts:expr $(,)?
+        $transaction_accounts:expr $(,)?//// optionally accept a trailing comma:
+                                            // vec![1, 2, 3]
+                                            // vec![1, 2, 3,]  
+                                            // trailing comma allowed
     ) => {
         use {
             solana_log_collector::LogCollector,
