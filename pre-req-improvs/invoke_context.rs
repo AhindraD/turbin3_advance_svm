@@ -300,7 +300,9 @@ impl<'a> InvokeContext<'a> {
                 .unwrap_or(false);
             if contains && !is_last {
                 // Reentrancy not allowed unless caller is calling itself
+                // Prevents reentrancy attacks where Program A calls Program B, which calls Program A again
                 return Err(InstructionError::ReentrancyNotAllowed);
+                //Only fails if program is in stack AND it's not self-calling
             }
         }
 
@@ -412,6 +414,8 @@ impl<'a> InvokeContext<'a> {
             )?;
 
             // Readonly in caller cannot become writable in callee
+            // If caller has account as readonly, CPI cannot make it writable
+            // Prevents malicious programs from modifying unmut accounts
             if instruction_account.is_writable && !borrowed_account.is_writable() {
                 ic_msg!(
                     self,
